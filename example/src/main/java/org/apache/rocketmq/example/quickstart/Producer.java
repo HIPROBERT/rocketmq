@@ -28,42 +28,22 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 public class Producer {
     public static void main(String[] args) throws MQClientException, InterruptedException {
 
-        /*
-         * Instantiate with a producer group name.
-         */
-        DefaultMQProducer producer = new DefaultMQProducer("please_rename_unique_group_name");
-
-        /*
-         * Specify name server addresses.
-         * <p/>
-         *
-         * Alternatively, you may specify name server addresses via exporting environmental variable: NAMESRV_ADDR
-         * <pre>
-         * {@code
-         * producer.setNamesrvAddr("name-server1-ip:9876;name-server2-ip:9876");
-         * }
-         * </pre>
-         */
-
-        /*
-         * Launch the instance.
-         */
+        //构造producer。设置生产者组
+        DefaultMQProducer producer = new DefaultMQProducer("piqm-test");
+        //设置name server服务器地址
+        producer.setNamesrvAddr("127.0.0.1:9876");
+        //设置消息发送超时时间
+        producer.setSendMsgTimeout(60000);
+        //producer启动
         producer.start();
 
-        for (int i = 0; i < 1000; i++) {
+
+        for (int i = 0; i < 10; i++) {
             try {
 
-                /*
-                 * Create a message instance, specifying topic, tag and message body.
-                 */
-                Message msg = new Message("TopicTest" /* Topic */,
-                    "TagA" /* Tag */,
-                    ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET) /* Message body */
-                );
+                //构造消息
+                Message msg = new Message("TopicTest","TagA", ("Hello RocketMQ,this is piqm test" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
 
-                /*
-                 * Call send message to deliver message to one of brokers.
-                 */
                 SendResult sendResult = producer.send(msg);
 
                 System.out.printf("%s%n", sendResult);
